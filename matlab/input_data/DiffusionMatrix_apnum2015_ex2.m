@@ -28,7 +28,6 @@ function [G,N,M] = DiffusionMatrix_apnum2015_ex2(t,X)
     G = [ X(1) + X(2),   X(1) - X(2); ...
           X(1) + X(2),  -X(1) + X(2) ];
 
-
 end
 
 
