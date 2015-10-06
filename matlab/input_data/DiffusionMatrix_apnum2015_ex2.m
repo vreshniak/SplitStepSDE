@@ -1,4 +1,4 @@
-function [G,N,M] = DiffusionMatrix_apnum2015_ex2(t,X,transp)
+function [G,N,M] = DiffusionMatrix_apnum2015_ex2(t,X)
 
 %   Purpose
 %   =======
@@ -25,13 +25,9 @@ function [G,N,M] = DiffusionMatrix_apnum2015_ex2(t,X,transp)
     N = 2;
     M = 2;
 
-    if ( transp > 0 ) % transposed matrix
-        G = [ X(1) + X(2),   X(1) + X(2); ...
-              X(1) - X(2),  -X(1) + X(2) ];
-    else
-        G = [ X(1) + X(2),   X(1) - X(2); ...
-              X(1) + X(2),  -X(1) + X(2) ];
-    end
+    G = [ X(1) + X(2),   X(1) - X(2); ...
+          X(1) + X(2),  -X(1) + X(2) ];
+
 
 end
 
