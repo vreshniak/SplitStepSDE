@@ -13,7 +13,7 @@ function StratInt = MultStrat(dt,M,dW,p)
 %       Ref - P.Kloeden "Numerical solution of stochastic differential
 %                        equation", Chapter 5.8, Chapter 10.3
 %
-%   Additionally we utilize the property:
+%   Additionally we may utilize the property:
 %
 %       J(j1,j2) + J(j2,j1) = J(j1)*J(j2)
 %           Ref - P.Kloeden "Numerical solution of stochastic differential
@@ -55,7 +55,6 @@ function StratInt = MultStrat(dt,M,dW,p)
         
     mu = sqrt_dt * randn(M,1);
     
-    % non-diagonal entries
     for r = p:-1:1
         nu   = sqrt_dt * randn(M,1);
         zeta = sqrt_dt * randn(M,1);
