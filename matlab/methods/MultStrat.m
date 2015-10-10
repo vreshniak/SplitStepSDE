@@ -49,7 +49,7 @@ function StratInt = MultStrat(dt,M,dW,p)
     % additional coefficient
     ro = 0;
     for r = p:-1:1
-        ro = ro + 1/(r*r);
+        ro = ro + 1/r/r;
     end
     ro = sqrt(1/12 - 0.5*ro/(pi*pi));
         
