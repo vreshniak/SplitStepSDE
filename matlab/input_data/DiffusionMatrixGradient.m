@@ -19,6 +19,9 @@
     %   ==
     %   1) t - time
     %   2) X - N-by-1 vector of solution at time t
+    %   3) DiffusionMatrix - function handle that evaluates matrix of diffusion coefficients
+    %   4) N - dimension of the solution
+    %   5) M - dimension of the Wiener process
     %
     %   OUT
     %   ===

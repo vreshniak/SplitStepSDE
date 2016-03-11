@@ -27,23 +27,20 @@ function [Y,Wiener] = EulerMaruyama(DriftVector,DiffusionMatrix,T,Y0,Wiener)
 %   IN
 %   ==
 %   1) DriftVector     - function handle that evaluates drift vector
-%   2) DiffusionMatrix - function handle that evaluates matrix of 
-%                        diffusion coefficients
-%   3) T  - vector of time points
+%   2) DiffusionMatrix - function handle that evaluates matrix of diffusion coefficients
+%   3) T  - K-dimensional vector of time points
 %   4) Y0 - N-dimensional column vector with initial data
-%   5) Wiener - optional array of driving Wiener processes 
-%                 (same as in the output below)
+%   5) Wiener - (optional) M-by-K array of driving Wiener processes (same as in the output below)
 %
 %
 %   OUT
 %   ===
-%   Y - N-by-K solution array. Each row in Y is the solution of the
-%       corresponding equation
-%   Wiener - M-by-K-dimensional array of the driving Wiener processes. 
+%   Y      - N-by-K solution array. Each row in Y is the solution of the corresponding equation
+%   Wiener - M-by-K array of the driving Wiener processes. 
 
 
     % number of equations and dimension of the noise
-    [G,N,M] = DiffusionMatrix(1,Y0);
+    [~,N,M] = DiffusionMatrix(1,Y0);
     
     % number of points in time discretization
     K = length(T);
@@ -65,8 +62,8 @@ function [Y,Wiener] = EulerMaruyama(DriftVector,DiffusionMatrix,T,Y0,Wiener)
         % generate vector of noise increments
         dW = Wiener(:,i) - Wiener(:,i-1);
 
-        F = DriftVector(T(i),Y(:,i-1));
-        G = DiffusionMatrix(T(i),Y(:,i-1));
+        F = DriftVector(T(i-1),Y(:,i-1));
+        G = DiffusionMatrix(T(i-1),Y(:,i-1));
                 
         % update solution
         Y(:,i) = Y(:,i-1) + F*dt + G*dW;
