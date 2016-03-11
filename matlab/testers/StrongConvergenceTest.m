@@ -33,7 +33,7 @@ function [h,err,order] = StrongConvergenceTest(method,DriftVector,DiffusionMatri
 
     switch nargin 
         case 5
-            NPaths   = 1000;
+            NPaths   = 100;
             dt_ref   = 1e-8;
             grid_min = 16;
             grid_max = 2^floor(log2(0.1/dt_ref));
@@ -52,9 +52,13 @@ function [h,err,order] = StrongConvergenceTest(method,DriftVector,DiffusionMatri
             dt_max   = grid_max * dt_ref;
     end
 
+    
+    fprintf('dt_ref = %6.4e\n', dt_ref);
+    fprintf('dt_min = %6.4e\n', dt_min);
+    fprintf('dt_max = %6.4e\n\n', dt_max);
+    
     % reference time discretization
     tspan_ref      = 0:dt_ref:FTime;        
-    tspan_ref(end) = tspan_ref(end-1) + dt_ref;
 
     M     = size(DiffusionMatrix(1,Y0),2);  % dimension of the noise
     K_ref = length(tspan_ref);              % number of time points
@@ -71,16 +75,17 @@ function [h,err,order] = StrongConvergenceTest(method,DriftVector,DiffusionMatri
 	for p = 1:Nlev
         grid_cur(p) = grid_min*2^(p-1);
         h(p)        = grid_cur(p) * dt_ref;
-        tspan{p}    = 0:h(p):tspan_ref(end);
+        tspan{p}    = 0:h(p):FTime;
         K(p)        = length(tspan{p});
         Wiener{p}   = zeros(M,K(p));
 	end
+
     
     for path = 1:NPaths  
         % reference solution on the fine grid
         Wiener_ref = BrownianMotion(dt_ref,M,K_ref);
         Y_ref = Milstein(DriftVector,DiffusionMatrix,tspan_ref,Y0,Wiener_ref);
-%         Y_ref = EulerMaruyama(DriftVector,DiffusionMatrix,tspan_ref,Y0,Wiener_ref);
+        %Y_ref = EulerMaruyama(DriftVector,DiffusionMatrix,tspan_ref,Y0,Wiener_ref);
 
         % run test levels
         for p = 1:Nlev
@@ -88,7 +93,7 @@ function [h,err,order] = StrongConvergenceTest(method,DriftVector,DiffusionMatri
             for i = 1:K(p)
                 Wiener{p}(:,i) = Wiener_ref(:,(i-1)*grid_cur(p)+1);
             end
-    
+            
             % test different methods
             for n = 1:Nm
                 Y = method{n}(DriftVector,DiffusionMatrix,tspan{p},Y0,Wiener{p});
@@ -106,5 +111,6 @@ function [h,err,order] = StrongConvergenceTest(method,DriftVector,DiffusionMatri
         pp = polyfit( log(h), log(err(n,:)), 1 );
         order(n) = pp(1);
     end
+    
 
 end

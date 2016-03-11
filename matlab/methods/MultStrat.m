@@ -38,33 +38,40 @@ function StratInt = MultStrat(dt,M,dW,p)
     % initialize matrix
     StratInt = zeros(M,M);
 
-    % find number of partial sums required to get 1-st order convergence
-    % Ref - Kloeden, (10.3.10)   
-    if ( p < 0 )
-        p = ceil(1/dt);  
-    else
-        p = min(p,ceil(1/dt));
-    end
+    if (M > 1)
+        % find number of partial sums required to get 1-st order convergence
+        % Ref - Kloeden, (10.3.10)   
+        if ( p < 0 )
+            p = ceil(1/dt);  
+        else
+            p = min(p,ceil(1/dt));
+        end
     
-    % additional coefficient
-    ro = 0;
-    for r = p:-1:1
-        ro = ro + 1/(r*r);
-    end
-    ro = sqrt(1/12 - 0.5*ro/(pi*pi));
+        % additional coefficient
+        ro = 0;
+        for r = p:-1:1
+            ro = ro + 1/(r*r);
+        end
+        ro = sqrt(1/12 - 0.5*ro/(pi*pi));
+    
+        mu = sqrt_dt * randn(M,1);
+    
+        for r = p:-1:1
+            nu   = sqrt_dt * randn(M,1);
+            zeta = sqrt_dt * randn(M,1);
+            for i = 1:M
+                StratInt(:,i) = StratInt(:,i) + ( zeta(i)*(sqrt2*dW    + nu   ) - ...
+                                                  zeta   *(sqrt2*dW(i) + nu(i)) ) / r;
+            end
+        end
         
-    mu = sqrt_dt * randn(M,1);
-    
-    for r = p:-1:1
-        nu   = sqrt_dt * randn(M,1);
-        zeta = sqrt_dt * randn(M,1);
         for i = 1:M
-            StratInt(:,i) = StratInt(:,i) + ( zeta(i)*(sqrt2*dW    + nu   ) - ...
-                                              zeta   *(sqrt2*dW(i) + nu(i)) ) / r;
+            StratInt(:,i) = StratInt(:,i)/pi + 2*ro*(mu(i)*dW - mu*dW(i));
         end
     end
+    
     for i = 1:M
-        StratInt(:,i) = StratInt(:,i)/pi + dW(i)*dW + 2*ro*(mu(i)*dW - mu*dW(i));
+        StratInt(:,i) = StratInt(:,i) + dW(i)*dW;
     end
     StratInt = 0.5 * StratInt;
 
